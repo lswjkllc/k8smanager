@@ -1,0 +1,7 @@
+.idea/
+.vscode/
+data/
+local/
+config.yaml
+go.mod
+go.sum
