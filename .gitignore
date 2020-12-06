@@ -2,6 +2,7 @@
 .vscode/
 data/
 local/
+config/
+logs/
 config.yaml
-go.mod
 go.sum
