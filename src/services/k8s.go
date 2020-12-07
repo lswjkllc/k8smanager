@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	appsv1 "k8s.io/api/apps/v1"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
@@ -53,4 +54,14 @@ func (ks K8SService) ListPod(namespace string) (*v1.PodList, error) {
 func (ks K8SService) GetPod(namespace, pod string) (*v1.Pod, error) {
 	kpod, err := ks.clientset.CoreV1().Pods(namespace).Get(context.TODO(), pod, metav1.GetOptions{})
 	return kpod, err
+}
+
+func (ks K8SService) ListDeployment(namespace string) (*appsv1.DeploymentList, error) {
+	deployments, err := ks.clientset.AppsV1().Deployments(namespace).List(context.TODO(), metav1.ListOptions{})
+	return deployments, err
+}
+
+func (ks K8SService) GetDeployment(namespace, deployment string) (*appsv1.Deployment, error) {
+	kdeployment, err := ks.clientset.AppsV1().Deployments(namespace).Get(context.TODO(), deployment, metav1.GetOptions{})
+	return kdeployment, err
 }

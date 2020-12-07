@@ -16,6 +16,9 @@ func addRouter(e *echo.Echo) {
 
 	e.GET("/pod", handlers.GetPod)
 	e.GET("/pod/list", handlers.ListPod)
+
+	e.GET("/deployment", handlers.GetDeployment)
+	e.GET("/deployment/list", handlers.ListDeployment)
 }
 
 func main() {
