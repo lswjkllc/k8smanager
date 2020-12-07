@@ -8,11 +8,14 @@ import (
 )
 
 func addRouter(e *echo.Echo) {
-	e.POST("/users", handlers.SaveUser)
-	e.GET("/users/:id", handlers.GetUser)
-	e.GET("/show", handlers.Show)
-	e.POST("/save", handlers.Save)
-	e.POST("/save/file", handlers.SaveFile)
+	// e.POST("/users", handlers.SaveUser)
+	// e.GET("/users/:id", handlers.GetUser)
+	// e.GET("/show", handlers.Show)
+	// e.POST("/save", handlers.Save)
+	// e.POST("/save/file", handlers.SaveFile)
+
+	e.GET("/pod", handlers.GetPod)
+	e.GET("/pod/list", handlers.ListPod)
 }
 
 func main() {
