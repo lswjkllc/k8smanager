@@ -22,6 +22,9 @@ func addRouter(e *echo.Echo) {
 
 	e.GET("/namespace", handlers.GetNamespace)
 	e.GET("/namespace/list", handlers.ListNamespace)
+
+	e.GET("/service", handlers.GetService)
+	// e.GET("/service/list", handlers.ListService)
 }
 
 func main() {

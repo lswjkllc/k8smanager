@@ -42,3 +42,15 @@ type NamespaceList struct {
 	Data []Namespace `json:"data"`
 	Size int         `json:"size"`
 }
+
+type Service struct {
+	Name      string `json:"name" xml:"name" form:"name" query:"name"`
+	Namespace string `json:"namespace" xml:"namespace" form:"namespace" query:"namespace"`
+	Type      string `json:"type" xml:"type" form:"type" query:"type"`
+	Age       int64  `json:"age" xml:"age" form:"age" query:"age"`
+}
+
+type ServiceList struct {
+	Data []Service `json:"data"`
+	Size int       `json:"size"`
+}

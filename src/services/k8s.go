@@ -75,3 +75,13 @@ func (ks K8SService) GetNamespace(name string) (*v1.Namespace, error) {
 	namespace, err := ks.clientset.CoreV1().Namespaces().Get(context.TODO(), name, metav1.GetOptions{})
 	return namespace, err
 }
+
+func (ks K8SService) ListService(namespace string) (*v1.ServiceList, error) {
+	services, err := ks.clientset.CoreV1().Services(namespace).List(context.TODO(), metav1.ListOptions{})
+	return services, err
+}
+
+func (ks K8SService) GetService(namespace, name string) (*v1.Service, error) {
+	service, err := ks.clientset.CoreV1().Services(namespace).Get(context.TODO(), name, metav1.GetOptions{})
+	return service, err
+}

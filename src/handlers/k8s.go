@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"k8smanager/src/models"
 	"k8smanager/src/services"
 	"net/http"
@@ -171,4 +172,31 @@ func ListNamespace(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, models.NamespaceList{Data: data, Size: size})
+}
+
+func GetService(c echo.Context) error {
+	namespace := c.QueryParam("namespace")
+	name := c.QueryParam("name")
+
+	ks := services.New()
+
+	service, err := ks.GetService(namespace, name)
+	if err != nil {
+		return c.String(http.StatusOK, err.Error())
+	}
+	// 获取元信息
+	smeta := service.ObjectMeta
+	// 计算时长
+	age := time.Now().Unix() - smeta.CreationTimestamp.Unix()
+
+	status := service.ObjectMeta.Labels
+	fmt.Printf("status: %T\n", status)
+	fmt.Println("status: ", status)
+
+	data := models.Service{
+		Name: smeta.Name, Age: age,
+		Namespace: smeta.Namespace,
+		Type:      ""}
+
+	return c.JSON(http.StatusOK, data)
 }
