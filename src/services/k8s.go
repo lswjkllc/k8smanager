@@ -1,4 +1,4 @@
-package handlers
+package services
 
 import (
 	"context"
@@ -12,7 +12,24 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 )
 
-func ListNode(clientset *kubernetes.Clientset) {
+(
+	kubeconfig := flag.String("kubeconfig", "./config/config.yaml", "kubeconfig file path")
+	flag.Parse()
+
+	// use the current context in kubeconfig
+	config, err := clientcmd.BuildConfigFromFlags("", *kubeconfig)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	// create the clientset: *kubernetes.Clientset
+	clientset, err := kubernetes.NewForConfig(config)
+	if err != nil {
+		panic(err.Error())
+	}
+)
+
+func ListNode() {
 	// get nodes
 	nodes, err := clientset.CoreV1().Nodes().List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
@@ -25,7 +42,7 @@ func ListNode(clientset *kubernetes.Clientset) {
 	}
 }
 
-func ListPod(clientset *kubernetes.Clientset) {
+func ListPod() {
 	pods, err := clientset.CoreV1().Pods("").List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
 		panic(err.Error())
@@ -36,7 +53,7 @@ func ListPod(clientset *kubernetes.Clientset) {
 	}
 }
 
-func GetPod(clientset *kubernetes.Clientset, namespace string, pod string) {
+func GetPod(namespace, pod string) {
 	_, err := clientset.CoreV1().Pods(namespace).Get(context.TODO(), pod, metav1.GetOptions{})
 	if errors.IsNotFound(err) {
 		fmt.Printf("Pod %s in namespace %s not found\n", pod, namespace)
@@ -66,7 +83,6 @@ func ConnectK8S(configPath string) {
 	if err != nil {
 		panic(err.Error())
 	}
-	fmt.Printf("clientset type: %T\n", clientset)
 
 	// nodes
 	ListNode(clientset)
