@@ -37,3 +37,8 @@ type Namespace struct {
 	Status string `json:"status" xml:"status" form:"status" query:"status"`
 	Age    int64  `json:"age" xml:"age" form:"age" query:"age"`
 }
+
+type NamespaceList struct {
+	Data []Namespace `json:"data"`
+	Size int         `json:"size"`
+}

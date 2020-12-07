@@ -145,3 +145,30 @@ func GetNamespace(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, data)
 }
+
+func ListNamespace(c echo.Context) error {
+	ks := services.New()
+
+	namespaces, err := ks.ListNamespace()
+	if err != nil {
+		return c.String(http.StatusOK, err.Error())
+	}
+
+	items := namespaces.Items
+	size := len(items)
+
+	data := make([]models.Namespace, size)
+	for i, namespace := range items {
+		// 获取元信息
+		nmeta := namespace.ObjectMeta
+		// 计算运行时长（秒）
+		age := time.Now().Unix() - nmeta.CreationTimestamp.Unix()
+
+		var mnamespace = models.Namespace{
+			Name: nmeta.Name, Age: age,
+			Status: string(namespace.Status.Phase)}
+		data[i] = mnamespace
+	}
+
+	return c.JSON(http.StatusOK, models.NamespaceList{Data: data, Size: size})
+}
