@@ -19,6 +19,9 @@ func addRouter(e *echo.Echo) {
 
 	e.GET("/deployment", handlers.GetDeployment)
 	e.GET("/deployment/list", handlers.ListDeployment)
+
+	e.GET("/namespace", handlers.GetNamespace)
+	// e.GET("/namespace/list", handlers.ListNamespace)
 }
 
 func main() {

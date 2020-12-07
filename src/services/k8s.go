@@ -65,3 +65,13 @@ func (ks K8SService) GetDeployment(namespace, deployment string) (*appsv1.Deploy
 	kdeployment, err := ks.clientset.AppsV1().Deployments(namespace).Get(context.TODO(), deployment, metav1.GetOptions{})
 	return kdeployment, err
 }
+
+func (ks K8SService) ListNamespace() (*v1.NamespaceList, error) {
+	namespaces, err := ks.clientset.CoreV1().Namespaces().List(context.TODO(), metav1.ListOptions{})
+	return namespaces, err
+}
+
+func (ks K8SService) GetNamespace(name string) (*v1.Namespace, error) {
+	namespace, err := ks.clientset.CoreV1().Namespaces().Get(context.TODO(), name, metav1.GetOptions{})
+	return namespace, err
+}

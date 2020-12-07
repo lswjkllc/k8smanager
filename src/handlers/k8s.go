@@ -19,12 +19,14 @@ func GetPod(c echo.Context) error {
 	if err != nil {
 		return c.String(http.StatusOK, err.Error())
 	}
-	startTime := pod.ObjectMeta.CreationTimestamp.Unix()
-	curTime := time.Now().Unix()
+	// 获取元信息
+	pmeta := pod.ObjectMeta
+	// 计算时长
+	age := time.Now().Unix() - pmeta.CreationTimestamp.Unix()
 
 	data := models.Pod{
-		Name: pod.ObjectMeta.Name, Namespace: pod.ObjectMeta.Namespace,
-		Status: string(pod.Status.Phase), Age: (curTime - startTime)}
+		Name: pmeta.Name, Namespace: pmeta.Namespace,
+		Status: string(pod.Status.Phase), Age: age}
 
 	return c.JSON(http.StatusOK, data)
 }
@@ -44,11 +46,13 @@ func ListPod(c echo.Context) error {
 
 	data := make([]models.Pod, size)
 	for i, pod := range items {
-		startTime := pod.Status.StartTime.Unix()
-		curTime := time.Now().Unix()
+		// 获取元信息
+		pmeta := pod.ObjectMeta
+		// 计算时长
+		age := time.Now().Unix() - pmeta.CreationTimestamp.Unix()
 		var mpod = models.Pod{
-			Name: pod.ObjectMeta.Name, Namespace: pod.ObjectMeta.Namespace,
-			Status: string(pod.Status.Phase), Age: (curTime - startTime)}
+			Name: pmeta.Name, Namespace: pmeta.Namespace,
+			Status: string(pod.Status.Phase), Age: age}
 		data[i] = mpod
 	}
 
@@ -119,4 +123,25 @@ func ListDeployment(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, models.DeploymentList{Data: data, Size: size})
+}
+
+func GetNamespace(c echo.Context) error {
+	name := c.QueryParam("name")
+
+	ks := services.New()
+
+	namespace, err := ks.GetNamespace(name)
+	if err != nil {
+		return c.String(http.StatusOK, err.Error())
+	}
+	// 获取元信息
+	nmeta := namespace.ObjectMeta
+	// 计算时长
+	age := time.Now().Unix() - nmeta.CreationTimestamp.Unix()
+
+	data := models.Namespace{
+		Name: nmeta.Name, Age: age,
+		Status: string(namespace.Status.Phase)}
+
+	return c.JSON(http.StatusOK, data)
 }
