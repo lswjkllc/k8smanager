@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"k8smanager/src/models"
 	"k8smanager/src/services"
 	"net/http"
@@ -188,15 +187,14 @@ func GetService(c echo.Context) error {
 	smeta := service.ObjectMeta
 	// 计算时长
 	age := time.Now().Unix() - smeta.CreationTimestamp.Unix()
-
-	status := service.ObjectMeta.Labels
-	fmt.Printf("status: %T\n", status)
-	fmt.Println("status: ", status)
+	// 获取Spec
+	spec := service.Spec
 
 	data := models.Service{
 		Name: smeta.Name, Age: age,
 		Namespace: smeta.Namespace,
-		Type:      ""}
+		Type:      string(spec.Type),
+		ClusterIP: string(spec.ClusterIP)}
 
 	return c.JSON(http.StatusOK, data)
 }

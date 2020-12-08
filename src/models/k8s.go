@@ -47,6 +47,7 @@ type Service struct {
 	Name      string `json:"name" xml:"name" form:"name" query:"name"`
 	Namespace string `json:"namespace" xml:"namespace" form:"namespace" query:"namespace"`
 	Type      string `json:"type" xml:"type" form:"type" query:"type"`
+	ClusterIP string `json:"clusterIP" xml:"clusterIP" form:"clusterIP" query:"clusterIP"`
 	Age       int64  `json:"age" xml:"age" form:"age" query:"age"`
 }
 
