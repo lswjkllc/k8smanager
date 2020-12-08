@@ -8,12 +8,15 @@ import (
 )
 
 func GetPod(c echo.Context) error {
-	namespace := c.QueryParam("namespace")
-	name := c.QueryParam("name")
+	bp := new(models.BaseParams)
+
+	if err := c.Bind(bp); err != nil {
+		return responseJson(c, Fail, err.Error(), nil)
+	}
 
 	ks := services.New()
 
-	pod, err := ks.GetPod(namespace, name)
+	pod, err := ks.GetPod(bp.Namespace, bp.Name)
 	if err != nil {
 		return responseJson(c, Fail, err.Error(), nil)
 	}
@@ -24,11 +27,15 @@ func GetPod(c echo.Context) error {
 }
 
 func ListPod(c echo.Context) error {
-	namespace := c.QueryParam("namespace")
+	bp := new(models.BaseParams)
+
+	if err := c.Bind(bp); err != nil {
+		return responseJson(c, Fail, err.Error(), nil)
+	}
 
 	ks := services.New()
 
-	pods, err := ks.ListPod(namespace)
+	pods, err := ks.ListPod(bp.Namespace)
 	if err != nil {
 		return responseJson(c, Fail, err.Error(), nil)
 	}
@@ -45,12 +52,15 @@ func ListPod(c echo.Context) error {
 }
 
 func GetDeployment(c echo.Context) error {
-	namespace := c.QueryParam("namespace")
-	name := c.QueryParam("name")
+	bp := new(models.BaseParams)
+
+	if err := c.Bind(bp); err != nil {
+		return responseJson(c, Fail, err.Error(), nil)
+	}
 
 	ks := services.New()
 
-	deployment, err := ks.GetDeployment(namespace, name)
+	deployment, err := ks.GetDeployment(bp.Namespace, bp.Name)
 	if err != nil {
 		return responseJson(c, Fail, err.Error(), nil)
 	}
@@ -61,11 +71,15 @@ func GetDeployment(c echo.Context) error {
 }
 
 func ListDeployment(c echo.Context) error {
-	namespace := c.QueryParam("namespace")
+	bp := new(models.BaseParams)
+
+	if err := c.Bind(bp); err != nil {
+		return responseJson(c, Fail, err.Error(), nil)
+	}
 
 	ks := services.New()
 
-	deployments, err := ks.ListDeployment(namespace)
+	deployments, err := ks.ListDeployment(bp.Namespace)
 	if err != nil {
 		return responseJson(c, Fail, err.Error(), nil)
 	}
@@ -83,13 +97,13 @@ func ListDeployment(c echo.Context) error {
 
 func CreateDeployment(c echo.Context) error {
 	dps := new(models.DeploymentParams)
-	// 绑定
+
 	if err := c.Bind(dps); err != nil {
 		return responseJson(c, Fail, err.Error(), nil)
 	}
 
-	// 创建
 	ks := services.New()
+
 	deployment, err := ks.CreateDeployment(dps.Namespace, dps)
 	if err != nil {
 		return responseJson(c, Fail, err.Error(), nil)
@@ -100,12 +114,33 @@ func CreateDeployment(c echo.Context) error {
 	return responseJson(c, Success, "", data)
 }
 
-func GetNamespace(c echo.Context) error {
-	name := c.QueryParam("name")
+func DeleteDeployment(c echo.Context) error {
+	bp := new(models.BaseParams)
+
+	if err := c.Bind(bp); err != nil {
+		return responseJson(c, Fail, err.Error(), nil)
+	}
 
 	ks := services.New()
 
-	namespace, err := ks.GetNamespace(name)
+	err := ks.DeleteDeployment(bp.Namespace, bp.Name)
+	if err != nil {
+		return responseJson(c, Fail, err.Error(), nil)
+	}
+
+	return responseJson(c, Success, "", nil)
+}
+
+func GetNamespace(c echo.Context) error {
+	bp := new(models.BaseParams)
+
+	if err := c.Bind(bp); err != nil {
+		return responseJson(c, Fail, err.Error(), nil)
+	}
+
+	ks := services.New()
+
+	namespace, err := ks.GetNamespace(bp.Name)
 	if err != nil {
 		return responseJson(c, Fail, err.Error(), nil)
 	}
@@ -135,12 +170,15 @@ func ListNamespace(c echo.Context) error {
 }
 
 func GetService(c echo.Context) error {
-	namespace := c.QueryParam("namespace")
-	name := c.QueryParam("name")
+	bp := new(models.BaseParams)
+
+	if err := c.Bind(bp); err != nil {
+		return responseJson(c, Fail, err.Error(), nil)
+	}
 
 	ks := services.New()
 
-	service, err := ks.GetService(namespace, name)
+	service, err := ks.GetService(bp.Namespace, bp.Name)
 	if err != nil {
 		return responseJson(c, Fail, err.Error(), nil)
 	}
@@ -151,11 +189,15 @@ func GetService(c echo.Context) error {
 }
 
 func ListService(c echo.Context) error {
-	namespace := c.QueryParam("namespace")
+	bp := new(models.BaseParams)
+
+	if err := c.Bind(bp); err != nil {
+		return responseJson(c, Fail, err.Error(), nil)
+	}
 
 	ks := services.New()
 
-	services, err := ks.ListService(namespace)
+	services, err := ks.ListService(bp.Namespace)
 	if err != nil {
 		return responseJson(c, Fail, err.Error(), nil)
 	}

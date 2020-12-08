@@ -73,6 +73,11 @@ func (ks K8SService) GetDeployment(namespace, deployment string) (*appsv1.Deploy
 	return kdeployment, err
 }
 
+func (ks K8SService) DeleteDeployment(namespace, deployment string) error {
+	err := ks.clientset.AppsV1().Deployments(namespace).Delete(context.TODO(), deployment, metav1.DeleteOptions{})
+	return err
+}
+
 func (ks K8SService) CreateDeployment(namespace string, dps *models.DeploymentParams) (*appsv1.Deployment, error) {
 	var env []v1.EnvVar
 	var resource v1.ResourceRequirements
