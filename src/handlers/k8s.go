@@ -88,10 +88,17 @@ func CreateDeployment(c echo.Context) error {
 	if err := c.Bind(dps); err != nil {
 		return c.JSON(http.StatusOK, err.Error())
 	}
-	// 创建
-	// BeginDeployment(dps)
 
-	return c.JSON(http.StatusOK, dps)
+	// 创建
+	ks := services.New()
+	deployment, err := ks.CreateDeployment(dps.Namespace, dps)
+	if err != nil {
+		return c.String(http.StatusOK, err.Error())
+	}
+
+	data := BuildDeployment(deployment)
+
+	return c.JSON(http.StatusOK, data)
 }
 
 func GetNamespace(c echo.Context) error {

@@ -70,19 +70,36 @@ type ServiceList struct {
 	Size int       `json:"size"`
 }
 
-type DeploymentResource struct {
-	Cpu    string `json:"cpu" xml:"cpu" form:"cpu" query:"cpu"`
-	Memory string `json:"memory" xml:"memory" form:"memory" query:"memory"`
-}
+// type ResourceList struct {
+// 	Cpu    string `json:"cpu" xml:"cpu" form:"cpu" query:"cpu"`
+// 	Memory string `json:"memory" xml:"memory" form:"memory" query:"memory"`
+// }
 
-type DeploymentResources struct {
-	Limits   DeploymentResource `json:"limits" xml:"limits" form:"limits" query:"limits"`
-	Requests DeploymentResource `json:"requests" xml:"requests" form:"requests" query:"requests"`
+type ResourceName string
+
+const (
+	ResourceCPU              ResourceName = "cpu"
+	ResourceMemory           ResourceName = "memory"
+	ResourceStorage          ResourceName = "storage"
+	ResourceEphemeralStorage ResourceName = "ephemeral-storage"
+)
+
+type ResourceList map[ResourceName]string
+
+type ResourceRequirements struct {
+	Limits   ResourceList `json:"limits" xml:"limits" form:"limits" query:"limits"`
+	Requests ResourceList `json:"requests" xml:"requests" form:"requests" query:"requests"`
+}
+type EnvVar struct {
+	Name  string `json:"name" xml:"name" form:"name" query:"name"`
+	Value string `json:"value" xml:"value" form:"value" query:"value"`
 }
 
 type DeploymentParams struct {
-	Name      string              `json:"name" xml:"name" form:"name" query:"name"`
-	Image     string              `json:"image" xml:"image" form:"image" query:"image"`
-	Resources DeploymentResources `json:"resources" xml:"resources" form:"resources" query:"resources"`
-	Replicas  int                 `json:"replicas" xml:"replicas" form:"replicas" query:"replicas"`
+	Name      string               `json:"name" xml:"name" form:"name" query:"name"`
+	Namespace string               `json:"namespace" xml:"namespace" form:"namespace" query:"namespace"`
+	Image     string               `json:"image" xml:"image" form:"image" query:"image"`
+	Resources ResourceRequirements `json:"resources" xml:"resources" form:"resources" query:"resources"`
+	Replicas  int32                `json:"replicas" xml:"replicas" form:"replicas" query:"replicas"`
+	Env       []EnvVar             `json:"env" xml:"env" form:"env" query:"env"`
 }
