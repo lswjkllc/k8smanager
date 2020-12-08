@@ -3,7 +3,6 @@ package handlers
 import (
 	"k8smanager/src/models"
 	"k8smanager/src/services"
-	"net/http"
 
 	"github.com/labstack/echo"
 )
@@ -16,12 +15,12 @@ func GetPod(c echo.Context) error {
 
 	pod, err := ks.GetPod(namespace, name)
 	if err != nil {
-		return c.String(http.StatusOK, err.Error())
+		return responseJson(c, Fail, err.Error(), nil)
 	}
 
-	data := BuildPod(pod)
+	data := buildPod(pod)
 
-	return c.JSON(http.StatusOK, data)
+	return responseJson(c, Success, "", data)
 }
 
 func ListPod(c echo.Context) error {
@@ -31,7 +30,7 @@ func ListPod(c echo.Context) error {
 
 	pods, err := ks.ListPod(namespace)
 	if err != nil {
-		return c.String(http.StatusOK, err.Error())
+		return responseJson(c, Fail, err.Error(), nil)
 	}
 
 	items := pods.Items
@@ -39,10 +38,10 @@ func ListPod(c echo.Context) error {
 
 	data := make([]models.Pod, size)
 	for i, pod := range items {
-		data[i] = BuildPod(&pod)
+		data[i] = buildPod(&pod)
 	}
 
-	return c.JSON(http.StatusOK, models.PodList{Data: data, Size: size})
+	return responseJson(c, Success, "", models.PodList{Data: data, Size: size})
 }
 
 func GetDeployment(c echo.Context) error {
@@ -53,12 +52,12 @@ func GetDeployment(c echo.Context) error {
 
 	deployment, err := ks.GetDeployment(namespace, name)
 	if err != nil {
-		return c.String(http.StatusOK, err.Error())
+		return responseJson(c, Fail, err.Error(), nil)
 	}
 
-	data := BuildDeployment(deployment)
+	data := buildDeployment(deployment)
 
-	return c.JSON(http.StatusOK, data)
+	return responseJson(c, Success, "", data)
 }
 
 func ListDeployment(c echo.Context) error {
@@ -68,7 +67,7 @@ func ListDeployment(c echo.Context) error {
 
 	deployments, err := ks.ListDeployment(namespace)
 	if err != nil {
-		return c.String(http.StatusOK, err.Error())
+		return responseJson(c, Fail, err.Error(), nil)
 	}
 
 	items := deployments.Items
@@ -76,29 +75,29 @@ func ListDeployment(c echo.Context) error {
 
 	data := make([]models.Deployment, size)
 	for i, deployment := range items {
-		data[i] = BuildDeployment(&deployment)
+		data[i] = buildDeployment(&deployment)
 	}
 
-	return c.JSON(http.StatusOK, models.DeploymentList{Data: data, Size: size})
+	return responseJson(c, Success, "", models.DeploymentList{Data: data, Size: size})
 }
 
 func CreateDeployment(c echo.Context) error {
 	dps := new(models.DeploymentParams)
 	// 绑定
 	if err := c.Bind(dps); err != nil {
-		return c.JSON(http.StatusOK, err.Error())
+		return responseJson(c, Fail, err.Error(), nil)
 	}
 
 	// 创建
 	ks := services.New()
 	deployment, err := ks.CreateDeployment(dps.Namespace, dps)
 	if err != nil {
-		return c.String(http.StatusOK, err.Error())
+		return responseJson(c, Fail, err.Error(), nil)
 	}
 
-	data := BuildDeployment(deployment)
+	data := buildDeployment(deployment)
 
-	return c.JSON(http.StatusOK, data)
+	return responseJson(c, Success, "", data)
 }
 
 func GetNamespace(c echo.Context) error {
@@ -108,12 +107,12 @@ func GetNamespace(c echo.Context) error {
 
 	namespace, err := ks.GetNamespace(name)
 	if err != nil {
-		return c.String(http.StatusOK, err.Error())
+		return responseJson(c, Fail, err.Error(), nil)
 	}
 
-	data := BuildNamespace(namespace)
+	data := buildNamespace(namespace)
 
-	return c.JSON(http.StatusOK, data)
+	return responseJson(c, Success, "", data)
 }
 
 func ListNamespace(c echo.Context) error {
@@ -121,7 +120,7 @@ func ListNamespace(c echo.Context) error {
 
 	namespaces, err := ks.ListNamespace()
 	if err != nil {
-		return c.String(http.StatusOK, err.Error())
+		return responseJson(c, Fail, err.Error(), nil)
 	}
 
 	items := namespaces.Items
@@ -129,10 +128,10 @@ func ListNamespace(c echo.Context) error {
 
 	data := make([]models.Namespace, size)
 	for i, namespace := range items {
-		data[i] = BuildNamespace(&namespace)
+		data[i] = buildNamespace(&namespace)
 	}
 
-	return c.JSON(http.StatusOK, models.NamespaceList{Data: data, Size: size})
+	return responseJson(c, Success, "", models.NamespaceList{Data: data, Size: size})
 }
 
 func GetService(c echo.Context) error {
@@ -143,12 +142,12 @@ func GetService(c echo.Context) error {
 
 	service, err := ks.GetService(namespace, name)
 	if err != nil {
-		return c.String(http.StatusOK, err.Error())
+		return responseJson(c, Fail, err.Error(), nil)
 	}
 
-	data := BuildService(service)
+	data := buildService(service)
 
-	return c.JSON(http.StatusOK, data)
+	return responseJson(c, Success, "", data)
 }
 
 func ListService(c echo.Context) error {
@@ -158,7 +157,7 @@ func ListService(c echo.Context) error {
 
 	services, err := ks.ListService(namespace)
 	if err != nil {
-		return c.String(http.StatusOK, err.Error())
+		return responseJson(c, Fail, err.Error(), nil)
 	}
 
 	items := services.Items
@@ -166,8 +165,8 @@ func ListService(c echo.Context) error {
 
 	data := make([]models.Service, size)
 	for i, service := range items {
-		data[i] = BuildService(&service)
+		data[i] = buildService(&service)
 	}
 
-	return c.JSON(http.StatusOK, models.ServiceList{Data: data, Size: size})
+	return responseJson(c, Success, "", models.ServiceList{Data: data, Size: size})
 }
