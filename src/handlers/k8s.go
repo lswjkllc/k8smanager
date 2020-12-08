@@ -82,6 +82,18 @@ func ListDeployment(c echo.Context) error {
 	return c.JSON(http.StatusOK, models.DeploymentList{Data: data, Size: size})
 }
 
+func CreateDeployment(c echo.Context) error {
+	dps := new(models.DeploymentParams)
+	// 绑定
+	if err := c.Bind(dps); err != nil {
+		return c.JSON(http.StatusOK, err.Error())
+	}
+	// 创建
+	// BeginDeployment(dps)
+
+	return c.JSON(http.StatusOK, dps)
+}
+
 func GetNamespace(c echo.Context) error {
 	name := c.QueryParam("name")
 

@@ -69,3 +69,20 @@ type ServiceList struct {
 	Data []Service `json:"data"`
 	Size int       `json:"size"`
 }
+
+type DeploymentResource struct {
+	Cpu    string `json:"cpu" xml:"cpu" form:"cpu" query:"cpu"`
+	Memory string `json:"memory" xml:"memory" form:"memory" query:"memory"`
+}
+
+type DeploymentResources struct {
+	Limits   DeploymentResource `json:"limits" xml:"limits" form:"limits" query:"limits"`
+	Requests DeploymentResource `json:"requests" xml:"requests" form:"requests" query:"requests"`
+}
+
+type DeploymentParams struct {
+	Name      string              `json:"name" xml:"name" form:"name" query:"name"`
+	Image     string              `json:"image" xml:"image" form:"image" query:"image"`
+	Resources DeploymentResources `json:"resources" xml:"resources" form:"resources" query:"resources"`
+	Replicas  int                 `json:"replicas" xml:"replicas" form:"replicas" query:"replicas"`
+}
