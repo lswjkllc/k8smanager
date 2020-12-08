@@ -4,7 +4,6 @@ import (
 	"k8smanager/src/models"
 	"k8smanager/src/services"
 	"net/http"
-	"time"
 
 	"github.com/labstack/echo"
 )
@@ -19,14 +18,8 @@ func GetPod(c echo.Context) error {
 	if err != nil {
 		return c.String(http.StatusOK, err.Error())
 	}
-	// 获取元信息
-	pmeta := pod.ObjectMeta
-	// 计算时长
-	age := time.Now().Unix() - pmeta.CreationTimestamp.Unix()
 
-	data := models.Pod{
-		Name: pmeta.Name, Namespace: pmeta.Namespace,
-		Status: string(pod.Status.Phase), Age: age}
+	data := BuildPod(pod)
 
 	return c.JSON(http.StatusOK, data)
 }
@@ -46,14 +39,7 @@ func ListPod(c echo.Context) error {
 
 	data := make([]models.Pod, size)
 	for i, pod := range items {
-		// 获取元信息
-		pmeta := pod.ObjectMeta
-		// 计算时长
-		age := time.Now().Unix() - pmeta.CreationTimestamp.Unix()
-		var mpod = models.Pod{
-			Name: pmeta.Name, Namespace: pmeta.Namespace,
-			Status: string(pod.Status.Phase), Age: age}
-		data[i] = mpod
+		data[i] = BuildPod(&pod)
 	}
 
 	return c.JSON(http.StatusOK, models.PodList{Data: data, Size: size})
@@ -69,22 +55,8 @@ func GetDeployment(c echo.Context) error {
 	if err != nil {
 		return c.String(http.StatusOK, err.Error())
 	}
-	// 获取元信息
-	dmeta := deployment.ObjectMeta
-	// 计算运行时长（秒）
-	age := time.Now().Unix() - dmeta.CreationTimestamp.Unix()
-	// 获取相关状态
-	dstatus := deployment.Status
-	status := models.DeploymentStatus{
-		Replicas:            dstatus.Replicas,
-		UpdatedReplicas:     dstatus.UpdatedReplicas,
-		ReadyReplicas:       dstatus.ReadyReplicas,
-		AvailableReplicas:   dstatus.AvailableReplicas,
-		UnavailableReplicas: dstatus.UnavailableReplicas}
 
-	data := models.Deployment{
-		Name: dmeta.Name, Namespace: dmeta.Namespace,
-		Status: status, Age: age}
+	data := BuildDeployment(deployment)
 
 	return c.JSON(http.StatusOK, data)
 }
@@ -104,22 +76,7 @@ func ListDeployment(c echo.Context) error {
 
 	data := make([]models.Deployment, size)
 	for i, deployment := range items {
-		// 获取元信息
-		dmeta := deployment.ObjectMeta
-		// 计算运行时长（秒）
-		age := time.Now().Unix() - dmeta.CreationTimestamp.Unix()
-		// 获取相关状态
-		dstatus := deployment.Status
-		status := models.DeploymentStatus{
-			Replicas:            dstatus.Replicas,
-			UpdatedReplicas:     dstatus.UpdatedReplicas,
-			ReadyReplicas:       dstatus.ReadyReplicas,
-			AvailableReplicas:   dstatus.AvailableReplicas,
-			UnavailableReplicas: dstatus.UnavailableReplicas}
-		var mdeployment = models.Deployment{
-			Name: dmeta.Name, Namespace: dmeta.Namespace,
-			Status: status, Age: age}
-		data[i] = mdeployment
+		data[i] = BuildDeployment(&deployment)
 	}
 
 	return c.JSON(http.StatusOK, models.DeploymentList{Data: data, Size: size})
@@ -134,14 +91,8 @@ func GetNamespace(c echo.Context) error {
 	if err != nil {
 		return c.String(http.StatusOK, err.Error())
 	}
-	// 获取元信息
-	nmeta := namespace.ObjectMeta
-	// 计算时长
-	age := time.Now().Unix() - nmeta.CreationTimestamp.Unix()
 
-	data := models.Namespace{
-		Name: nmeta.Name, Age: age,
-		Status: string(namespace.Status.Phase)}
+	data := BuildNamespace(namespace)
 
 	return c.JSON(http.StatusOK, data)
 }
@@ -159,15 +110,7 @@ func ListNamespace(c echo.Context) error {
 
 	data := make([]models.Namespace, size)
 	for i, namespace := range items {
-		// 获取元信息
-		nmeta := namespace.ObjectMeta
-		// 计算运行时长（秒）
-		age := time.Now().Unix() - nmeta.CreationTimestamp.Unix()
-
-		var mnamespace = models.Namespace{
-			Name: nmeta.Name, Age: age,
-			Status: string(namespace.Status.Phase)}
-		data[i] = mnamespace
+		data[i] = BuildNamespace(&namespace)
 	}
 
 	return c.JSON(http.StatusOK, models.NamespaceList{Data: data, Size: size})
@@ -183,18 +126,29 @@ func GetService(c echo.Context) error {
 	if err != nil {
 		return c.String(http.StatusOK, err.Error())
 	}
-	// 获取元信息
-	smeta := service.ObjectMeta
-	// 计算时长
-	age := time.Now().Unix() - smeta.CreationTimestamp.Unix()
-	// 获取Spec
-	spec := service.Spec
 
-	data := models.Service{
-		Name: smeta.Name, Age: age,
-		Namespace: smeta.Namespace,
-		Type:      string(spec.Type),
-		ClusterIP: string(spec.ClusterIP)}
+	data := BuildService(service)
 
 	return c.JSON(http.StatusOK, data)
+}
+
+func ListService(c echo.Context) error {
+	namespace := c.QueryParam("namespace")
+
+	ks := services.New()
+
+	services, err := ks.ListService(namespace)
+	if err != nil {
+		return c.String(http.StatusOK, err.Error())
+	}
+
+	items := services.Items
+	size := len(items)
+
+	data := make([]models.Service, size)
+	for i, service := range items {
+		data[i] = BuildService(&service)
+	}
+
+	return c.JSON(http.StatusOK, models.ServiceList{Data: data, Size: size})
 }
