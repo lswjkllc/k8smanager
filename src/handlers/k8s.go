@@ -48,7 +48,11 @@ func ListPod(c echo.Context) error {
 		data[i] = buildPod(&pod)
 	}
 
-	return responseJson(c, Success, "", models.PodList{Data: data, Size: size})
+	result := make(map[string]interface{})
+	result["data"] = data
+	result["size"] = size
+
+	return responseJson(c, Success, "", result)
 }
 
 func GetDeployment(c echo.Context) error {
@@ -65,7 +69,7 @@ func GetDeployment(c echo.Context) error {
 		return responseJson(c, Fail, err.Error(), nil)
 	}
 
-	data := buildDeployment(deployment)
+	data := buildDeploymentParams(deployment)
 
 	return responseJson(c, Success, "", data)
 }
@@ -92,7 +96,11 @@ func ListDeployment(c echo.Context) error {
 		data[i] = buildDeployment(&deployment)
 	}
 
-	return responseJson(c, Success, "", models.DeploymentList{Data: data, Size: size})
+	result := make(map[string]interface{})
+	result["data"] = data
+	result["size"] = size
+
+	return responseJson(c, Success, "", result)
 }
 
 func CreateDeployment(c echo.Context) error {
@@ -185,7 +193,11 @@ func ListNamespace(c echo.Context) error {
 		data[i] = buildNamespace(&namespace)
 	}
 
-	return responseJson(c, Success, "", models.NamespaceList{Data: data, Size: size})
+	result := make(map[string]interface{})
+	result["data"] = data
+	result["size"] = size
+
+	return responseJson(c, Success, "", result)
 }
 
 func GetService(c echo.Context) error {
@@ -229,5 +241,9 @@ func ListService(c echo.Context) error {
 		data[i] = buildService(&service)
 	}
 
-	return responseJson(c, Success, "", models.ServiceList{Data: data, Size: size})
+	result := make(map[string]interface{})
+	result["data"] = data
+	result["size"] = size
+
+	return responseJson(c, Success, "", result)
 }

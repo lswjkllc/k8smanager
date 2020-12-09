@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"encoding/json"
 	"k8smanager/src/models"
 	"net/http"
 	"time"
@@ -37,6 +38,43 @@ func buildPod(pod *v1.Pod) models.Pod {
 	return models.Pod{
 		Name: pmeta.Name, Namespace: pmeta.Namespace,
 		Status: string(pod.Status.Phase), Age: age}
+}
+
+func buildDeploymentParams(deployment *appsv1.Deployment) models.DeploymentParams {
+	// 获取元数据
+	dmeta := deployment.ObjectMeta
+	// 获取 Spec
+	dspec := deployment.Spec
+	// 获取 Template
+	dspecTemp := dspec.Template
+	// 获取 第一个 Container
+	dstcon := dspecTemp.Spec.Containers[0]
+
+	// 重构 Env: dstcon.Env
+	var envs []models.EnvVar
+	envParams, _ := json.Marshal(dstcon.Env)
+	json.Unmarshal(envParams, &envs)
+	// 重构 Resources: dstcon.Resources
+	dresources := dstcon.Resources
+	// limits
+	var limits models.ResourceList
+	limitParams, _ := json.Marshal(dresources.Limits)
+	json.Unmarshal(limitParams, &limits)
+	// requests
+	var requests models.ResourceList
+	requestsParams, _ := json.Marshal(dresources.Requests)
+	json.Unmarshal(requestsParams, &requests)
+
+	resources := models.ResourceRequirements{
+		Limits:   limits,
+		Requests: requests}
+
+	return models.DeploymentParams{
+		Name: dmeta.Name, Namespace: dmeta.Namespace,
+		Image:     dstcon.Image,
+		Replicas:  *dspec.Replicas,
+		Env:       envs,
+		Resources: resources}
 }
 
 func buildDeployment(deployment *appsv1.Deployment) models.Deployment {
