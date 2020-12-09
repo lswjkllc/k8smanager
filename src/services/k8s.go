@@ -78,6 +78,50 @@ func (ks K8SService) DeleteDeployment(namespace, deployment string) error {
 	return err
 }
 
+func (ks K8SService) UpdateDeployment(namespace string, dps *models.DeploymentParams) (*appsv1.Deployment, error) {
+	var env []v1.EnvVar
+	var resource v1.ResourceRequirements
+
+	// 组织环境变量
+	envParams, _ := json.Marshal(dps.Env)
+	json.Unmarshal(envParams, &env)
+	// 组织资源数据
+	resourceParams, _ := json.Marshal(dps.Resources)
+	json.Unmarshal(resourceParams, &resource)
+	// 组织labels
+	labels := map[string]string{"run": dps.Name}
+	// 组织选择器
+	var selector = metav1.LabelSelector{MatchLabels: labels}
+
+	deployment := &appsv1.Deployment{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: dps.Name,
+		},
+		Spec: appsv1.DeploymentSpec{
+			Selector: &selector,
+			Replicas: &dps.Replicas,
+			Template: v1.PodTemplateSpec{
+				ObjectMeta: metav1.ObjectMeta{
+					Labels: labels,
+				},
+				Spec: v1.PodSpec{
+					Containers: []v1.Container{
+						{
+							Name:            dps.Name,
+							Image:           dps.Image,
+							ImagePullPolicy: "Always",
+							Env:             env,
+							Resources:       resource,
+						},
+					},
+				},
+			},
+		},
+	}
+	kdeployment, err := ks.clientset.AppsV1().Deployments(namespace).Update(context.TODO(), deployment, metav1.UpdateOptions{})
+	return kdeployment, err
+}
+
 func (ks K8SService) CreateDeployment(namespace string, dps *models.DeploymentParams) (*appsv1.Deployment, error) {
 	var env []v1.EnvVar
 	var resource v1.ResourceRequirements

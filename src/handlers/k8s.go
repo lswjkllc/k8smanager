@@ -114,6 +114,25 @@ func CreateDeployment(c echo.Context) error {
 	return responseJson(c, Success, "", data)
 }
 
+func UpdateDeployment(c echo.Context) error {
+	dps := new(models.DeploymentParams)
+
+	if err := c.Bind(dps); err != nil {
+		return responseJson(c, Fail, err.Error(), nil)
+	}
+
+	ks := services.New()
+
+	deployment, err := ks.UpdateDeployment(dps.Namespace, dps)
+	if err != nil {
+		return responseJson(c, Fail, err.Error(), nil)
+	}
+
+	data := buildDeployment(deployment)
+
+	return responseJson(c, Success, "", data)
+}
+
 func DeleteDeployment(c echo.Context) error {
 	bp := new(models.BaseParams)
 
