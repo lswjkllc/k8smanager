@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"k8smanager/src/handlers"
 
 	"github.com/labstack/echo"
@@ -30,9 +31,21 @@ func addRouter(e *echo.Echo) {
 	e.GET("/service/list", handlers.ListService)
 }
 
+//中间件函数
+func authorization(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		auth := c.Request().Header.Get("authorization")
+		fmt.Println("auth: ", auth)
+		return next(c)
+	}
+}
+
 func main() {
 	e := echo.New()
+	// 注册中间件
+	e.Use(middleware.Recover())
 	e.Use(middleware.Logger())
+	e.Use(authorization)
 
 	addRouter(e)
 
