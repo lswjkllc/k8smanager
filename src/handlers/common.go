@@ -3,31 +3,11 @@ package handlers
 import (
 	"encoding/json"
 	"k8smanager/src/models"
-	"net/http"
 	"time"
 
-	"github.com/labstack/echo"
 	appsv1 "k8s.io/api/apps/v1"
 	v1 "k8s.io/api/core/v1"
 )
-
-type ResponseCode int
-
-const (
-	Fail    ResponseCode = 1
-	Success ResponseCode = 0
-)
-
-func responseJson(c echo.Context, code ResponseCode,
-	message string, data interface{}) error {
-
-	result := make(map[string]interface{})
-	result["code"] = code
-	result["message"] = message
-	result["data"] = data
-
-	return c.JSON(http.StatusOK, result)
-}
 
 func buildPod(pod *v1.Pod) models.Pod {
 	// 获取元信息

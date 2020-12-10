@@ -176,9 +176,14 @@ func (ks K8SService) GetNamespace(name string) (*v1.Namespace, error) {
 	return namespace, err
 }
 
-func (ks K8SService) CreateNamespace(name *v1.Namespace) (*v1.Namespace, error) {
-	namespace, err := ks.clientset.CoreV1().Namespaces().Create(context.TODO(), name, metav1.CreateOptions{})
-	return namespace, err
+func (ks K8SService) CreateNamespace(name string) (*v1.Namespace, error) {
+	namespace := &v1.Namespace{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: name,
+		},
+	}
+	knamespace, err := ks.clientset.CoreV1().Namespaces().Create(context.TODO(), namespace, metav1.CreateOptions{})
+	return knamespace, err
 }
 
 func (ks K8SService) ListService(namespace string) (*v1.ServiceList, error) {
