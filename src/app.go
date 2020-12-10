@@ -1,8 +1,8 @@
 package main
 
 import (
+	"encoding/json"
 	"errors"
-	"fmt"
 	hs "k8smanager/src/handlers"
 	ss "k8smanager/src/services"
 	us "k8smanager/src/utils"
@@ -13,12 +13,6 @@ import (
 )
 
 func addRouter(e *echo.Echo) {
-	// e.POST("/users", hs.SaveUser)
-	// e.GET("/users/:id", hs.GetUser)
-	// e.GET("/show", hs.Show)
-	// e.POST("/save", hs.Save)
-	// e.POST("/save/file", hs.SaveFile)
-
 	e.GET("/pod", hs.GetPod)
 	e.GET("/pod/list", hs.ListPod)
 
@@ -35,48 +29,53 @@ func addRouter(e *echo.Echo) {
 	e.GET("/service/list", hs.ListService)
 }
 
-func aiCheck(c echo.Context, data string) error {
-	name := strings.Split(data, "@")[0]
-	fmt.Println("name: ", name)
-
+func checkName(name string) (string, error) {
 	ks := ss.New()
 	_, err := ks.GetNamespace(name)
 	if err != nil {
 		_, err := ks.CreateNamespace(name)
-		return err
+		return name, err
 	}
-	return err
+	return name, err
+}
+
+func aiCheck(data string) (string, error) {
+	name := strings.Split(data, "@")[0]
+	return checkName(name)
+}
+
+func ssoCheck(data string) (string, error) {
+	var ssoData map[string]string
+	err := json.Unmarshal([]byte(data), &ssoData)
+	if err != nil {
+		return "", err
+	}
+	name := ssoData["name"]
+	return checkName(name)
 }
 
 // 登陆验证
 func login(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		header := c.Request().Header
+		namespace := ""
 		err := errors.New("Unauthorized")
 
-		if data := header.Get("ai-userid"); data != "" {
-			err = aiCheck(c, data)
+		if data := header.Get("authorization"); data != "" {
+			c.Logger().Print("ai check...")
+			namespace, err = aiCheck(data)
+		} else if data := header.Get("sso"); data != "" {
+			c.Logger().Print("sso check...")
+			namespace, err = ssoCheck(data)
 		}
-		// else if data := header.Get("tuya_employee"); data != "" {
-		// 	flag = ssoCheck(c, data)
-		// }
-		// else if data := header.Get("authorization"); data != "" {
-		// 	flag = simpleCheck(c, data)
-		// }
 
 		if err != nil {
 			return us.ResponseJson(c, us.Fail, err.Error(), nil)
 		}
+		// 向 c 增加 namespace
+		header["namespace"] = []string{namespace}
+
 		return next(c)
-
-		// var authJson map[string]string
-		// authStr := c.Request().Header.Get("authorization")
-		// err := json.Unmarshal([]byte(authStr), &authJson)
-		// if err != nil {
-		// 	return us.ResponseJson(c, us.Fail, "Unauthorized", nil)
-		// }
-
-		// return next(c)
 	}
 }
 
