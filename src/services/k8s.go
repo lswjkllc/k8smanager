@@ -42,7 +42,7 @@ func (ks K8SService) ListNode() {
 		fmt.Printf("%v", err)
 		return
 	}
-	fmt.Printf("There are %d nodes in the cluster\n", len(nodes.Items))
+
 	for i, node := range nodes.Items {
 		fmt.Println(i, node.Name)
 	}

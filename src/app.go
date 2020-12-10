@@ -1,8 +1,9 @@
 package main
 
 import (
-	"fmt"
+	"encoding/json"
 	"k8smanager/src/handlers"
+	"net/http"
 
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
@@ -34,8 +35,13 @@ func addRouter(e *echo.Echo) {
 //中间件函数
 func authorization(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		auth := c.Request().Header.Get("authorization")
-		fmt.Println("auth: ", auth)
+		var authJson map[string]string
+		authStr := c.Request().Header.Get("authorization")
+		err := json.Unmarshal([]byte(authStr), &authJson)
+		if err != nil {
+			return echo.NewHTTPError(http.StatusUnauthorized)
+		}
+
 		return next(c)
 	}
 }
@@ -46,10 +52,8 @@ func main() {
 	e.Use(middleware.Recover())
 	e.Use(middleware.Logger())
 	e.Use(authorization)
-
+	// 添加路由
 	addRouter(e)
-
+	// 开启服务
 	e.Logger.Fatal(e.Start(":1323"))
-
-	// api.ConnectK8S("./config/config.yaml")
 }
