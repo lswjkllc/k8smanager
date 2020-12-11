@@ -20,6 +20,42 @@ func buildPod(pod *v1.Pod) models.Pod {
 		Status: string(pod.Status.Phase), Age: age}
 }
 
+func buildPodParams(pod *v1.Pod) models.PodParams {
+	// 获取元数据
+	pmeta := pod.ObjectMeta
+	// 获取 Spec
+	pspec := pod.Spec
+	// 获取 第一个 Container
+	pstcon := pspec.Containers[0]
+
+	// 重构 Env: pstcon.Env
+	var envs []models.EnvVar
+	envParams, _ := json.Marshal(pstcon.Env)
+	json.Unmarshal(envParams, &envs)
+	// 重构 Resources: pstcon.Resources
+	presources := pstcon.Resources
+	// limits
+	var limits models.ResourceList
+	limitParams, _ := json.Marshal(presources.Limits)
+	json.Unmarshal(limitParams, &limits)
+	// requests
+	var requests models.ResourceList
+	requestsParams, _ := json.Marshal(presources.Requests)
+	json.Unmarshal(requestsParams, &requests)
+
+	resources := models.ResourceRequirements{
+		Limits:   limits,
+		Requests: requests}
+
+	return models.PodParams{
+		Name:      pmeta.Name,
+		Image:     pstcon.Image,
+		Env:       envs,
+		Resources: resources,
+		NodeName:  pspec.NodeName,
+	}
+}
+
 func buildDeploymentParams(deployment *appsv1.Deployment) models.DeploymentParams {
 	// 获取元数据
 	dmeta := deployment.ObjectMeta
@@ -27,8 +63,10 @@ func buildDeploymentParams(deployment *appsv1.Deployment) models.DeploymentParam
 	dspec := deployment.Spec
 	// 获取 Template
 	dspecTemp := dspec.Template
+	// PodTemp spec
+	dst := dspecTemp.Spec
 	// 获取 第一个 Container
-	dstcon := dspecTemp.Spec.Containers[0]
+	dstcon := dst.Containers[0]
 
 	// 重构 Env: dstcon.Env
 	var envs []models.EnvVar
@@ -50,11 +88,13 @@ func buildDeploymentParams(deployment *appsv1.Deployment) models.DeploymentParam
 		Requests: requests}
 
 	return models.DeploymentParams{
-		Name: dmeta.Name, Namespace: dmeta.Namespace,
+		Name:      dmeta.Name,
 		Image:     dstcon.Image,
 		Replicas:  *dspec.Replicas,
 		Env:       envs,
-		Resources: resources}
+		Resources: resources,
+		NodeName:  dst.NodeName,
+	}
 }
 
 func buildDeployment(deployment *appsv1.Deployment) models.Deployment {

@@ -8,6 +8,44 @@ import (
 	"github.com/labstack/echo"
 )
 
+func DeletePod(c echo.Context) error {
+	bp := new(models.BaseParams)
+
+	if err := c.Bind(bp); err != nil {
+		return us.ResponseJson(c, us.Fail, err.Error(), nil)
+	}
+
+	ks := services.New()
+	namespace := c.Request().Header.Get("Namespace")
+
+	err := ks.DeletePod(namespace, bp.Name)
+	if err != nil {
+		return us.ResponseJson(c, us.Fail, err.Error(), nil)
+	}
+
+	return us.ResponseJson(c, us.Success, "", nil)
+}
+
+func UpdatePod(c echo.Context) error {
+	pps := new(models.PodParams)
+
+	if err := c.Bind(pps); err != nil {
+		return us.ResponseJson(c, us.Fail, err.Error(), nil)
+	}
+
+	ks := services.New()
+	namespace := c.Request().Header.Get("Namespace")
+
+	pod, err := ks.ApplyPod(namespace, pps, true)
+	if err != nil {
+		return us.ResponseJson(c, us.Fail, err.Error(), nil)
+	}
+
+	data := buildPod(pod)
+
+	return us.ResponseJson(c, us.Success, "", data)
+}
+
 func CreatePod(c echo.Context) error {
 	pps := new(models.PodParams)
 
@@ -18,7 +56,7 @@ func CreatePod(c echo.Context) error {
 	ks := services.New()
 	namespace := c.Request().Header.Get("Namespace")
 
-	pod, err := ks.CreatePod(namespace, pps)
+	pod, err := ks.ApplyPod(namespace, pps, false)
 	if err != nil {
 		return us.ResponseJson(c, us.Fail, err.Error(), nil)
 	}
@@ -43,7 +81,7 @@ func GetPod(c echo.Context) error {
 		return us.ResponseJson(c, us.Fail, err.Error(), nil)
 	}
 
-	data := buildPod(pod)
+	data := buildPodParams(pod)
 
 	return us.ResponseJson(c, us.Success, "", data)
 }

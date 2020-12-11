@@ -16,12 +16,14 @@ func addRouter(e *echo.Echo) {
 	e.GET("/pod", hs.GetPod)
 	e.GET("/pod/list", hs.ListPod)
 	e.POST("/pod/create", hs.CreatePod)
+	e.POST("/pod/update", hs.UpdatePod)
+	e.POST("/pod/delete", hs.DeletePod)
 
 	e.GET("/deployment", hs.GetDeployment)
 	e.GET("/deployment/list", hs.ListDeployment)
 	e.POST("/deployment/create", hs.CreateDeployment)
-	e.POST("/deployment/delete", hs.DeleteDeployment)
 	e.POST("/deployment/update", hs.UpdateDeployment)
+	e.POST("/deployment/delete", hs.DeleteDeployment)
 
 	e.GET("/namespace", hs.GetNamespace)
 	e.GET("/namespace/list", hs.ListNamespace)

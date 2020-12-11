@@ -62,7 +62,7 @@ func CreateDeployment(c echo.Context) error {
 	ks := services.New()
 	namespace := c.Request().Header.Get("Namespace")
 
-	deployment, err := ks.CreateDeployment(namespace, dps)
+	deployment, err := ks.ApplyDeployment(namespace, dps, false)
 	if err != nil {
 		return us.ResponseJson(c, us.Fail, err.Error(), nil)
 	}
@@ -82,7 +82,7 @@ func UpdateDeployment(c echo.Context) error {
 	ks := services.New()
 	namespace := c.Request().Header.Get("Namespace")
 
-	deployment, err := ks.UpdateDeployment(namespace, dps)
+	deployment, err := ks.ApplyDeployment(namespace, dps, true)
 	if err != nil {
 		return us.ResponseJson(c, us.Fail, err.Error(), nil)
 	}
