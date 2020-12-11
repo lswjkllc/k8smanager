@@ -16,8 +16,9 @@ func GetPod(c echo.Context) error {
 	}
 
 	ks := services.New()
+	namespace := c.Request().Header.Get("Namespace")
 
-	pod, err := ks.GetPod(bp.Namespace, bp.Name)
+	pod, err := ks.GetPod(namespace, bp.Name)
 	if err != nil {
 		return us.ResponseJson(c, us.Fail, err.Error(), nil)
 	}
@@ -28,15 +29,10 @@ func GetPod(c echo.Context) error {
 }
 
 func ListPod(c echo.Context) error {
-	bp := new(models.BaseParams)
-
-	if err := c.Bind(bp); err != nil {
-		return us.ResponseJson(c, us.Fail, err.Error(), nil)
-	}
-
 	ks := services.New()
+	namespace := c.Request().Header.Get("Namespace")
 
-	pods, err := ks.ListPod(bp.Namespace)
+	pods, err := ks.ListPod(namespace)
 	if err != nil {
 		return us.ResponseJson(c, us.Fail, err.Error(), nil)
 	}
@@ -64,8 +60,9 @@ func GetDeployment(c echo.Context) error {
 	}
 
 	ks := services.New()
+	namespace := c.Request().Header.Get("Namespace")
 
-	deployment, err := ks.GetDeployment(bp.Namespace, bp.Name)
+	deployment, err := ks.GetDeployment(namespace, bp.Name)
 	if err != nil {
 		return us.ResponseJson(c, us.Fail, err.Error(), nil)
 	}
@@ -76,15 +73,10 @@ func GetDeployment(c echo.Context) error {
 }
 
 func ListDeployment(c echo.Context) error {
-	bp := new(models.BaseParams)
-
-	if err := c.Bind(bp); err != nil {
-		return us.ResponseJson(c, us.Fail, err.Error(), nil)
-	}
-
 	ks := services.New()
+	namespace := c.Request().Header.Get("Namespace")
 
-	deployments, err := ks.ListDeployment(bp.Namespace)
+	deployments, err := ks.ListDeployment(namespace)
 	if err != nil {
 		return us.ResponseJson(c, us.Fail, err.Error(), nil)
 	}
@@ -112,8 +104,9 @@ func CreateDeployment(c echo.Context) error {
 	}
 
 	ks := services.New()
+	namespace := c.Request().Header.Get("Namespace")
 
-	deployment, err := ks.CreateDeployment(dps.Namespace, dps)
+	deployment, err := ks.CreateDeployment(namespace, dps)
 	if err != nil {
 		return us.ResponseJson(c, us.Fail, err.Error(), nil)
 	}
@@ -131,8 +124,9 @@ func UpdateDeployment(c echo.Context) error {
 	}
 
 	ks := services.New()
+	namespace := c.Request().Header.Get("Namespace")
 
-	deployment, err := ks.UpdateDeployment(dps.Namespace, dps)
+	deployment, err := ks.UpdateDeployment(namespace, dps)
 	if err != nil {
 		return us.ResponseJson(c, us.Fail, err.Error(), nil)
 	}
@@ -150,8 +144,9 @@ func DeleteDeployment(c echo.Context) error {
 	}
 
 	ks := services.New()
+	namespace := c.Request().Header.Get("Namespace")
 
-	err := ks.DeleteDeployment(bp.Namespace, bp.Name)
+	err := ks.DeleteDeployment(namespace, bp.Name)
 	if err != nil {
 		return us.ResponseJson(c, us.Fail, err.Error(), nil)
 	}
@@ -160,15 +155,10 @@ func DeleteDeployment(c echo.Context) error {
 }
 
 func GetNamespace(c echo.Context) error {
-	bp := new(models.BaseParams)
-
-	if err := c.Bind(bp); err != nil {
-		return us.ResponseJson(c, us.Fail, err.Error(), nil)
-	}
-
 	ks := services.New()
+	name := c.Request().Header.Get("Namespace")
 
-	namespace, err := ks.GetNamespace(bp.Name)
+	namespace, err := ks.GetNamespace(name)
 	if err != nil {
 		return us.ResponseJson(c, us.Fail, err.Error(), nil)
 	}
@@ -209,8 +199,9 @@ func GetService(c echo.Context) error {
 	}
 
 	ks := services.New()
+	namespace := c.Request().Header.Get("Namespace")
 
-	service, err := ks.GetService(bp.Namespace, bp.Name)
+	service, err := ks.GetService(namespace, bp.Name)
 	if err != nil {
 		return us.ResponseJson(c, us.Fail, err.Error(), nil)
 	}
@@ -221,15 +212,10 @@ func GetService(c echo.Context) error {
 }
 
 func ListService(c echo.Context) error {
-	bp := new(models.BaseParams)
-
-	if err := c.Bind(bp); err != nil {
-		return us.ResponseJson(c, us.Fail, err.Error(), nil)
-	}
-
 	ks := services.New()
+	namespace := c.Request().Header.Get("Namespace")
 
-	services, err := ks.ListService(bp.Namespace)
+	services, err := ks.ListService(namespace)
 	if err != nil {
 		return us.ResponseJson(c, us.Fail, err.Error(), nil)
 	}

@@ -73,7 +73,7 @@ func login(next echo.HandlerFunc) echo.HandlerFunc {
 			return us.ResponseJson(c, us.Fail, err.Error(), nil)
 		}
 		// 向 c 增加 namespace
-		header["namespace"] = []string{namespace}
+		header["Namespace"] = []string{namespace}
 
 		return next(c)
 	}
