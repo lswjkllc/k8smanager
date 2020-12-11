@@ -15,6 +15,7 @@ import (
 func addRouter(e *echo.Echo) {
 	e.GET("/pod", hs.GetPod)
 	e.GET("/pod/list", hs.ListPod)
+	e.POST("/pod/create", hs.CreatePod)
 
 	e.GET("/deployment", hs.GetDeployment)
 	e.GET("/deployment/list", hs.ListDeployment)

@@ -1,17 +1,5 @@
 package models
 
-type BaseParams struct {
-	Name      string `json:"name" xml:"name" form:"name" query:"name"`
-	Namespace string `json:"namespace" xml:"namespace" form:"namespace" query:"namespace"`
-}
-
-type Pod struct {
-	Name      string `json:"name" xml:"name" form:"name" query:"name"`
-	Namespace string `json:"namespace" xml:"namespace" form:"namespace" query:"namespace"`
-	Status    string `json:"status" xml:"status" form:"status" query:"status"`
-	Age       int64  `json:"age" xml:"age" form:"age" query:"age"`
-}
-
 type DeploymentStatus struct {
 	Replicas            int32 `json:"replicas" xml:"replicas" form:"replicas" query:"replicas"`
 	UpdatedReplicas     int32 `json:"updateRplicas" xml:"updateRplicas" form:"updateRplicas" query:"updateRplicas"`
@@ -25,35 +13,6 @@ type Deployment struct {
 	Namespace string           `json:"namespace" xml:"namespace" form:"namespace" query:"namespace"`
 	Status    DeploymentStatus `json:"status" xml:"status" form:"status" query:"status"`
 	Age       int64            `json:"age" xml:"age" form:"age" query:"age"`
-}
-
-type Namespace struct {
-	Name   string `json:"name" xml:"name" form:"name" query:"name"`
-	Status string `json:"status" xml:"status" form:"status" query:"status"`
-	Age    int64  `json:"age" xml:"age" form:"age" query:"age"`
-}
-
-type IntOrString struct {
-	Type   int64  `json:"type" xml:"type" form:"type" query:"type"`
-	IntVal int32  `json:"intVal" xml:"intVal" form:"intVal" query:"intVal"`
-	StrVal string `json:"strVal" xml:"strVal" form:"strVal" query:"strVal"`
-}
-
-type ServicePort struct {
-	Name       string      `json:"name" xml:"name" form:"name" query:"name"`
-	Port       int32       `json:"port" xml:"port" form:"port" query:"port"`
-	TargetPort IntOrString `json:"targetPort" xml:"targetPort" form:"targetPort" query:"targetPort"`
-	NodePort   int32       `json:"nodePort" xml:"nodePort" form:"nodePort" query:"nodePort"`
-}
-
-type Service struct {
-	Name        string        `json:"name" xml:"name" form:"name" query:"name"`
-	Namespace   string        `json:"namespace" xml:"namespace" form:"namespace" query:"namespace"`
-	Type        string        `json:"type" xml:"type" form:"type" query:"type"`
-	ClusterIP   string        `json:"clusterIP" xml:"clusterIP" form:"clusterIP" query:"clusterIP"`
-	ExternalIPs []string      `json:"externalIPs" xml:"externalIPs" form:"externalIPs" query:"externalIPs"`
-	Ports       []ServicePort `json:"ports" xml:"ports" form:"ports" query:"ports"`
-	Age         int64         `json:"age" xml:"age" form:"age" query:"age"`
 }
 
 type ResourceName string
@@ -71,6 +30,7 @@ type ResourceRequirements struct {
 	Limits   ResourceList `json:"limits" xml:"limits" form:"limits" query:"limits"`
 	Requests ResourceList `json:"requests" xml:"requests" form:"requests" query:"requests"`
 }
+
 type EnvVar struct {
 	Name  string `json:"name" xml:"name" form:"name" query:"name"`
 	Value string `json:"value" xml:"value" form:"value" query:"value"`
