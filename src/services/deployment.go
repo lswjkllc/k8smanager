@@ -36,7 +36,7 @@ func (ks K8SService) ApplyDeployment(namespace string, dps *models.DeploymentPar
 	resourceParams, _ := json.Marshal(dps.Resources)
 	json.Unmarshal(resourceParams, &resource)
 	// 组织labels
-	labels := map[string]string{"run": dps.Name}
+	labels := map[string]string{"deployment": dps.Name}
 	// 组织选择器
 	var selector = metav1.LabelSelector{MatchLabels: labels}
 
