@@ -26,3 +26,8 @@ func (ks K8SService) CreateNamespace(name string) (*v1.Namespace, error) {
 	knamespace, err := ks.clientset.CoreV1().Namespaces().Create(context.TODO(), namespace, metav1.CreateOptions{})
 	return knamespace, err
 }
+
+func (ks K8SService) DeleteNamespace(name string) error {
+	err := ks.clientset.CoreV1().Namespaces().Delete(context.TODO(), name, metav1.DeleteOptions{})
+	return err
+}

@@ -22,3 +22,34 @@ type Service struct {
 	Ports       []ServicePort `json:"ports" xml:"ports" form:"ports" query:"ports"`
 	Age         int64         `json:"age" xml:"age" form:"age" query:"age"`
 }
+
+type ServiceType string
+
+const (
+	ServiceTypeClusterIP    ServiceType = "ClusterIP"
+	ServiceTypeNodePort     ServiceType = "NodePort"
+	ServiceTypeLoadBalancer ServiceType = "LoadBalancer"
+	ServiceTypeExternalName ServiceType = "ExternalName"
+)
+
+func (p ServiceType) String() string {
+	switch p {
+	case ServiceTypeClusterIP:
+		return "ClusterIP"
+	case ServiceTypeNodePort:
+		return "NodePort"
+	case ServiceTypeLoadBalancer:
+		return "LoadBalancer"
+	case ServiceTypeExternalName:
+		return "ServiceTypeExternalName"
+	default:
+		return "UNKNOWN"
+	}
+}
+
+type ServiceParams struct {
+	Name       string `json:"name" xml:"name" form:"name" query:"name"`
+	Type       string `json:"type" xml:"type" form:"type" query:"type"`
+	TargetName string `json:"targetName" xml:"targetName" form:"targetName" query:"targetName"`
+	Port       int32  `json:"port" xml:"port" form:"port" query:"port"`
+}

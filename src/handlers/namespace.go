@@ -8,6 +8,18 @@ import (
 	"github.com/labstack/echo"
 )
 
+func DeleteNamespace(c echo.Context) error {
+	ks := services.New()
+	name := c.Request().Header.Get("Namespace")
+
+	err := ks.DeleteNamespace(name)
+	if err != nil {
+		return us.ResponseJson(c, us.Fail, err.Error(), nil)
+	}
+
+	return us.ResponseJson(c, us.Success, "", nil)
+}
+
 func GetNamespace(c echo.Context) error {
 	ks := services.New()
 	name := c.Request().Header.Get("Namespace")

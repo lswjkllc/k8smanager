@@ -31,12 +31,18 @@ func (ks K8SService) ApplyDeployment(namespace string, dps *models.DeploymentPar
 
 	// 组织环境变量
 	envParams, _ := json.Marshal(dps.Env)
-	json.Unmarshal(envParams, &env)
+	err := json.Unmarshal(envParams, &env)
+	if err != nil {
+		return nil, err
+	}
 	// 组织资源数据
 	resourceParams, _ := json.Marshal(dps.Resources)
-	json.Unmarshal(resourceParams, &resource)
+	err = json.Unmarshal(resourceParams, &resource)
+	if err != nil {
+		return nil, err
+	}
 	// 组织labels
-	labels := map[string]string{"deployment": dps.Name}
+	labels := map[string]string{"app": dps.Name}
 	// 组织选择器
 	var selector = metav1.LabelSelector{MatchLabels: labels}
 
@@ -68,7 +74,6 @@ func (ks K8SService) ApplyDeployment(namespace string, dps *models.DeploymentPar
 	}
 
 	var kdeployment *appsv1.Deployment
-	var err error
 	if update {
 		kdeployment, err = ks.clientset.AppsV1().Deployments(namespace).Update(context.TODO(), deployment, metav1.UpdateOptions{})
 	} else {

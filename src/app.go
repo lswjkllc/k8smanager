@@ -27,9 +27,13 @@ func addRouter(e *echo.Echo) {
 
 	e.GET("/namespace", hs.GetNamespace)
 	e.GET("/namespace/list", hs.ListNamespace)
+	e.POST("/namespace/delete", hs.DeleteNamespace)
 
 	e.GET("/service", hs.GetService)
+	e.GET("/service/types", hs.GetServiceTypes)
 	e.GET("/service/list", hs.ListService)
+	e.POST("/service/create", hs.CreateService)
+	e.POST("/service/delete", hs.DeleteService)
 }
 
 func checkName(name string) (string, error) {

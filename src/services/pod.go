@@ -30,17 +30,23 @@ func (ks K8SService) UpdatePod(namespace string, pps *models.PodParams) (*v1.Pod
 
 	// 组织环境变量
 	envParams, _ := json.Marshal(pps.Env)
-	json.Unmarshal(envParams, &env)
+	err := json.Unmarshal(envParams, &env)
+	if err != nil {
+		return nil, err
+	}
 	// 组织资源数据
 	resourceParams, _ := json.Marshal(pps.Resources)
-	json.Unmarshal(resourceParams, &resource)
-	// // 组织labels
-	// labels := map[string]string{"run": pps.Name}
+	err = json.Unmarshal(resourceParams, &resource)
+	if err != nil {
+		return nil, err
+	}
+	// 组织labels
+	labels := map[string]string{"run": pps.Name}
 
 	pod := &v1.Pod{
 		ObjectMeta: metav1.ObjectMeta{
-			Name: pps.Name,
-			// Labels: labels,
+			Name:   pps.Name,
+			Labels: labels,
 		},
 		Spec: v1.PodSpec{
 			Containers: []v1.Container{
@@ -66,12 +72,18 @@ func (ks K8SService) CreatePod(namespace string, pps *models.PodParams) (*v1.Pod
 
 	// 组织环境变量
 	envParams, _ := json.Marshal(pps.Env)
-	json.Unmarshal(envParams, &env)
+	err := json.Unmarshal(envParams, &env)
+	if err != nil {
+		return nil, err
+	}
 	// 组织资源数据
 	resourceParams, _ := json.Marshal(pps.Resources)
-	json.Unmarshal(resourceParams, &resource)
+	err = json.Unmarshal(resourceParams, &resource)
+	if err != nil {
+		return nil, err
+	}
 	// 组织labels
-	labels := map[string]string{"pod": pps.Name}
+	labels := map[string]string{"run": pps.Name}
 
 	pod := &v1.Pod{
 		ObjectMeta: metav1.ObjectMeta{
