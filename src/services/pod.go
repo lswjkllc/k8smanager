@@ -24,7 +24,7 @@ func (ks K8SService) DeletePod(namespace, pod string) error {
 	return err
 }
 
-func (ks K8SService) ApplyPod(namespace string, pps *models.PodParams, update bool) (*v1.Pod, error) {
+func (ks K8SService) UpdatePod(namespace string, pps *models.PodParams) (*v1.Pod, error) {
 	var env []v1.EnvVar
 	var resource v1.ResourceRequirements
 
@@ -56,13 +56,42 @@ func (ks K8SService) ApplyPod(namespace string, pps *models.PodParams, update bo
 		},
 	}
 
-	var kpod *v1.Pod
-	var err error
-	if update {
-		kpod, err = ks.clientset.CoreV1().Pods(namespace).Update(context.TODO(), pod, metav1.UpdateOptions{})
-	} else {
-		kpod, err = ks.clientset.CoreV1().Pods(namespace).Create(context.TODO(), pod, metav1.CreateOptions{})
+	kpod, err := ks.clientset.CoreV1().Pods(namespace).Update(context.TODO(), pod, metav1.UpdateOptions{})
+	return kpod, err
+}
+
+func (ks K8SService) CreatePod(namespace string, pps *models.PodParams) (*v1.Pod, error) {
+	var env []v1.EnvVar
+	var resource v1.ResourceRequirements
+
+	// 组织环境变量
+	envParams, _ := json.Marshal(pps.Env)
+	json.Unmarshal(envParams, &env)
+	// 组织资源数据
+	resourceParams, _ := json.Marshal(pps.Resources)
+	json.Unmarshal(resourceParams, &resource)
+	// 组织labels
+	labels := map[string]string{"run": pps.Name}
+
+	pod := &v1.Pod{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:   pps.Name,
+			Labels: labels,
+		},
+		Spec: v1.PodSpec{
+			Containers: []v1.Container{
+				{
+					Name:            pps.Name,
+					Image:           pps.Image,
+					ImagePullPolicy: "Always",
+					Env:             env,
+					Resources:       resource,
+				},
+			},
+			NodeName: pps.NodeName,
+		},
 	}
 
+	kpod, err := ks.clientset.CoreV1().Pods(namespace).Create(context.TODO(), pod, metav1.CreateOptions{})
 	return kpod, err
 }

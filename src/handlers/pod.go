@@ -36,7 +36,7 @@ func UpdatePod(c echo.Context) error {
 	ks := services.New()
 	namespace := c.Request().Header.Get("Namespace")
 
-	pod, err := ks.ApplyPod(namespace, pps, true)
+	pod, err := ks.UpdatePod(namespace, pps)
 	if err != nil {
 		return us.ResponseJson(c, us.Fail, err.Error(), nil)
 	}
@@ -56,7 +56,7 @@ func CreatePod(c echo.Context) error {
 	ks := services.New()
 	namespace := c.Request().Header.Get("Namespace")
 
-	pod, err := ks.ApplyPod(namespace, pps, false)
+	pod, err := ks.CreatePod(namespace, pps)
 	if err != nil {
 		return us.ResponseJson(c, us.Fail, err.Error(), nil)
 	}
