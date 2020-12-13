@@ -26,26 +26,6 @@ func DeletePod(c echo.Context) error {
 	return us.ResponseJson(c, us.Success, "", nil)
 }
 
-func UpdatePod(c echo.Context) error {
-	pps := new(models.PodParams)
-
-	if err := c.Bind(pps); err != nil {
-		return us.ResponseJson(c, us.Fail, err.Error(), nil)
-	}
-
-	ks := services.New()
-	namespace := c.Request().Header.Get("Namespace")
-
-	pod, err := ks.UpdatePod(namespace, pps)
-	if err != nil {
-		return us.ResponseJson(c, us.Fail, err.Error(), nil)
-	}
-
-	data := buildPod(pod)
-
-	return us.ResponseJson(c, us.Success, "", data)
-}
-
 func CreatePod(c echo.Context) error {
 	pps := new(models.PodParams)
 
