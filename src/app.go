@@ -33,6 +33,8 @@ func addRouter(e *echo.Echo) {
 	e.GET("/service/list", hs.ListService)
 	e.POST("/service/create", hs.CreateService)
 	e.POST("/service/delete", hs.DeleteService)
+
+	e.POST(/pvc, hs.CreatePVC)
 }
 
 func checkName(name string) (string, error) {

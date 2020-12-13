@@ -1,21 +1,21 @@
 package handlers
 
 import (
-	"k8smanager/src/models"
-	"k8smanager/src/services"
+	ms "k8smanager/src/models"
+	ss "k8smanager/src/services"
 	us "k8smanager/src/utils"
 
 	"github.com/labstack/echo"
 )
 
 func DeletePod(c echo.Context) error {
-	bp := new(models.BaseParams)
+	bp := new(ms.BaseParams)
 
 	if err := c.Bind(bp); err != nil {
 		return us.ResponseJson(c, us.Fail, err.Error(), nil)
 	}
 
-	ks := services.New()
+	ks := ss.New()
 	namespace := c.Request().Header.Get("Namespace")
 
 	err := ks.DeletePod(namespace, bp.Name)
@@ -27,13 +27,13 @@ func DeletePod(c echo.Context) error {
 }
 
 func CreatePod(c echo.Context) error {
-	pps := new(models.PodParams)
+	pps := new(ms.PodParams)
 
 	if err := c.Bind(pps); err != nil {
 		return us.ResponseJson(c, us.Fail, err.Error(), nil)
 	}
 
-	ks := services.New()
+	ks := ss.New()
 	namespace := c.Request().Header.Get("Namespace")
 
 	pod, err := ks.CreatePod(namespace, pps)
@@ -47,13 +47,13 @@ func CreatePod(c echo.Context) error {
 }
 
 func GetPod(c echo.Context) error {
-	bp := new(models.BaseParams)
+	bp := new(ms.BaseParams)
 
 	if err := c.Bind(bp); err != nil {
 		return us.ResponseJson(c, us.Fail, err.Error(), nil)
 	}
 
-	ks := services.New()
+	ks := ss.New()
 	namespace := c.Request().Header.Get("Namespace")
 
 	pod, err := ks.GetPod(namespace, bp.Name)
@@ -67,7 +67,7 @@ func GetPod(c echo.Context) error {
 }
 
 func ListPod(c echo.Context) error {
-	ks := services.New()
+	ks := ss.New()
 	namespace := c.Request().Header.Get("Namespace")
 
 	pods, err := ks.ListPod(namespace)
@@ -78,7 +78,7 @@ func ListPod(c echo.Context) error {
 	items := pods.Items
 	size := len(items)
 
-	data := make([]models.Pod, size)
+	data := make([]ms.Pod, size)
 	for i, pod := range items {
 		data[i] = buildPod(&pod)
 	}

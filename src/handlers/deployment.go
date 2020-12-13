@@ -1,21 +1,21 @@
 package handlers
 
 import (
-	"k8smanager/src/models"
-	"k8smanager/src/services"
+	ms "k8smanager/src/models"
+	ss "k8smanager/src/services"
 	us "k8smanager/src/utils"
 
 	"github.com/labstack/echo"
 )
 
 func GetDeployment(c echo.Context) error {
-	bp := new(models.BaseParams)
+	bp := new(ms.BaseParams)
 
 	if err := c.Bind(bp); err != nil {
 		return us.ResponseJson(c, us.Fail, err.Error(), nil)
 	}
 
-	ks := services.New()
+	ks := ss.New()
 	namespace := c.Request().Header.Get("Namespace")
 
 	deployment, err := ks.GetDeployment(namespace, bp.Name)
@@ -29,7 +29,7 @@ func GetDeployment(c echo.Context) error {
 }
 
 func ListDeployment(c echo.Context) error {
-	ks := services.New()
+	ks := ss.New()
 	namespace := c.Request().Header.Get("Namespace")
 
 	deployments, err := ks.ListDeployment(namespace)
@@ -40,7 +40,7 @@ func ListDeployment(c echo.Context) error {
 	items := deployments.Items
 	size := len(items)
 
-	data := make([]models.Deployment, size)
+	data := make([]ms.Deployment, size)
 	for i, deployment := range items {
 		data[i] = buildDeployment(&deployment)
 	}
@@ -53,13 +53,13 @@ func ListDeployment(c echo.Context) error {
 }
 
 func CreateDeployment(c echo.Context) error {
-	dps := new(models.DeploymentParams)
+	dps := new(ms.DeploymentParams)
 
 	if err := c.Bind(dps); err != nil {
 		return us.ResponseJson(c, us.Fail, err.Error(), nil)
 	}
 
-	ks := services.New()
+	ks := ss.New()
 	namespace := c.Request().Header.Get("Namespace")
 
 	deployment, err := ks.ApplyDeployment(namespace, dps, false)
@@ -73,13 +73,13 @@ func CreateDeployment(c echo.Context) error {
 }
 
 func UpdateDeployment(c echo.Context) error {
-	dps := new(models.DeploymentParams)
+	dps := new(ms.DeploymentParams)
 
 	if err := c.Bind(dps); err != nil {
 		return us.ResponseJson(c, us.Fail, err.Error(), nil)
 	}
 
-	ks := services.New()
+	ks := ss.New()
 	namespace := c.Request().Header.Get("Namespace")
 
 	deployment, err := ks.ApplyDeployment(namespace, dps, true)
@@ -93,13 +93,13 @@ func UpdateDeployment(c echo.Context) error {
 }
 
 func DeleteDeployment(c echo.Context) error {
-	bp := new(models.BaseParams)
+	bp := new(ms.BaseParams)
 
 	if err := c.Bind(bp); err != nil {
 		return us.ResponseJson(c, us.Fail, err.Error(), nil)
 	}
 
-	ks := services.New()
+	ks := ss.New()
 	namespace := c.Request().Header.Get("Namespace")
 
 	err := ks.DeleteDeployment(namespace, bp.Name)

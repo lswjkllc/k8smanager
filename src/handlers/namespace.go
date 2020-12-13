@@ -1,15 +1,15 @@
 package handlers
 
 import (
-	"k8smanager/src/models"
-	"k8smanager/src/services"
+	ms "k8smanager/src/models"
+	ss "k8smanager/src/services"
 	us "k8smanager/src/utils"
 
 	"github.com/labstack/echo"
 )
 
 func DeleteNamespace(c echo.Context) error {
-	ks := services.New()
+	ks := ss.New()
 	name := c.Request().Header.Get("Namespace")
 
 	err := ks.DeleteNamespace(name)
@@ -21,7 +21,7 @@ func DeleteNamespace(c echo.Context) error {
 }
 
 func GetNamespace(c echo.Context) error {
-	ks := services.New()
+	ks := ss.New()
 	name := c.Request().Header.Get("Namespace")
 
 	namespace, err := ks.GetNamespace(name)
@@ -35,7 +35,7 @@ func GetNamespace(c echo.Context) error {
 }
 
 func ListNamespace(c echo.Context) error {
-	ks := services.New()
+	ks := ss.New()
 
 	namespaces, err := ks.ListNamespace()
 	if err != nil {
@@ -45,7 +45,7 @@ func ListNamespace(c echo.Context) error {
 	items := namespaces.Items
 	size := len(items)
 
-	data := make([]models.Namespace, size)
+	data := make([]ms.Namespace, size)
 	for i, namespace := range items {
 		data[i] = buildNamespace(&namespace)
 	}
