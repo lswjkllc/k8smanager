@@ -23,7 +23,7 @@ func GetService(c echo.Context) error {
 		return us.ResponseJson(c, us.Fail, err.Error(), nil)
 	}
 
-	data := buildService(service)
+	data := buildServiceParams(service)
 
 	return us.ResponseJson(c, us.Success, "", data)
 }

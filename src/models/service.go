@@ -11,6 +11,7 @@ type ServicePort struct {
 	Port       int32       `json:"port" xml:"port" form:"port" query:"port"`
 	TargetPort IntOrString `json:"targetPort" xml:"targetPort" form:"targetPort" query:"targetPort"`
 	NodePort   int32       `json:"nodePort" xml:"nodePort" form:"nodePort" query:"nodePort"`
+	Protocol   string      `json:"protocol" xml:"protocol" form:"protocol" query:"protocol"`
 }
 
 type Service struct {

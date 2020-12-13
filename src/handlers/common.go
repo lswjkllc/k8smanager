@@ -145,6 +145,18 @@ func buildNamespace(namespace *v1.Namespace) ms.Namespace {
 		Status: string(namespace.Status.Phase)}
 }
 
+func buildServiceParams(service *v1.Service) ms.ServiceParams {
+	// 获取元信息
+	smeta := service.ObjectMeta
+	// 获取 Spec
+	spec := service.Spec
+
+	return ms.ServiceParams{
+		Name: smeta.Name, Type: string(spec.Type),
+		TargetName: spec.Selector["app"],
+		Port:       spec.Ports[0].Port}
+}
+
 func buildService(service *v1.Service) ms.Service {
 	// 获取元信息
 	smeta := service.ObjectMeta
@@ -166,7 +178,8 @@ func buildService(service *v1.Service) ms.Service {
 		ports[i] = ms.ServicePort{
 			Name: port.Name, Port: port.Port,
 			TargetPort: targetPort,
-			NodePort:   port.NodePort}
+			NodePort:   port.NodePort,
+			Protocol:   string(port.Protocol)}
 	}
 
 	return ms.Service{
